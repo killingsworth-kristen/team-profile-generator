@@ -80,6 +80,7 @@ const generateTeam = team => {
 }
 
 // export function to generate entire page
+// `team` is a string value of HTML doc
 module.exports = team => {
 
     return `
