@@ -10,6 +10,8 @@ const Manager = require(`./Manager`);
 const generateHTML = require(`./generateHtml`);
 const internal = require("stream");
 
+const team = [];
+
 const manager = () => {
     inquirer.prompt([
         {
@@ -33,6 +35,8 @@ const manager = () => {
             message: `What is the team manager's office number?`
         }
     ]).then((answers)=> {
+        const manager = new Manager (answers.managerName, answers.managerId, answers.managerEmail, answers.managerOfficeNumber)
+        team.push(manager);
         buildTeam();
     })
 }
@@ -45,16 +49,21 @@ const buildTeam = () => {
             message: `Who do you want to add to your team?`,
             choices: [`Engineer`,`Intern`,`Quit`]
         }
-    ]).then((answers)=>{
+    ]).then((answers)=> {
         if (answers.buildTeam === `Engineer`) {
             engineer();
         } else if (answers.buildTeam === `Intern`) {
             intern();
         } else {
-            // write file
-            console.log(`HTML file generated!`)
+            fs.writeFile(`index.html`, generateHTML(team), err => {
+                if (err) {
+                    console.error(err);
+                } else {
+                    console.log(`HTML file generated!`);
+                }
+            });
         }
-    })
+    });
 }
 
 const engineer = () => {
@@ -80,6 +89,8 @@ const engineer = () => {
             message: `What is this engineer's Github username?`
         }
     ]).then((answers)=>{
+        const engineer = new Engineer (answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub)
+        team.push(engineer);
         buildTeam();
     })
 }
@@ -107,8 +118,10 @@ const intern = () => {
             message: `Where did this intern go to school?`
         }
     ]).then((answers)=> {
+        const intern = new Intern (answers.internName, answers.internId, answers.internEmail, answers.internSchool)
+        team.push(intern);
         buildTeam();
     })
 }
 
-manager()
+manager();
